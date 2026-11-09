@@ -15,7 +15,18 @@ pipeline {
 
     post {
         always {
-            echo "Build result: ${currentBuild.currentResult}"
+            script {
+                env.BUILD_STATUS = currentBuild.currentResult
+
+                withCredentials([string(credentialsId: 'webex-bot-token', variable: 'WEBEX_TOKEN')]) {
+                    sh '''
+                        curl -sS -X POST https://webexapis.com/v1/messages \
+                          -H "Authorization: Bearer $WEBEX_TOKEN" \
+                          -H "Content-Type: application/json" \
+                          -d "{\"roomId\":\"Y2lzY29zcGFyazovL3VybjpURUFNOnVzLXdlc3QtMl9yL1JPT00vMGViMGVhODAtZGJmMi0xMWYxLWFmNzItMjNmMzA5Yjc3Yjky\",\"markdown\":\"Jenkins build $BUILD_STATUS: $JOB_NAME #$BUILD_NUMBER\"}"
+                    '''
+                }
+            }
         }
     }
 }
