@@ -1,3 +1,4 @@
+@'
 pipeline {
     agent any
 
@@ -23,10 +24,11 @@ pipeline {
                         curl -sS -X POST https://webexapis.com/v1/messages \
                           -H "Authorization: Bearer $WEBEX_TOKEN" \
                           -H "Content-Type: application/json" \
-                          -d "{\"roomId\":\"Y2lzY29zcGFyazovL3VybjpURUFNOnVzLXdlc3QtMl9yL1JPT00vMGViMGVhODAtZGJmMi0xMWYxLWFmNzItMjNmMzA5Yjc3Yjky\",\"markdown\":\"Jenkins build $BUILD_STATUS: $JOB_NAME #$BUILD_NUMBER\"}"
+                          --data-raw '{"roomId":"Y2lzY29zcGFyazovL3VybjpURUFNOnVzLXdlc3QtMl9yL1JPT00vMGViMGVhODAtZGJmMi0xMWYxLWFmNzItMjNmMzA5Yjc3Yjky","markdown":"Jenkins build '"$BUILD_STATUS"' for '"$JOB_NAME"' #'"$BUILD_NUMBER"'"}'
                     '''
                 }
             }
         }
     }
 }
+'@ | Set-Content Jenkinsfile
